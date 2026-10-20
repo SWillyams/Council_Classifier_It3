@@ -1,0 +1,61 @@
+request_text,category,0,1
+large pothole outside colombo street causing cars to swerve,road,water,multi_nb
+glass and loose gravel left on cycle lane near hagley park,road,waste,multi_nb
+traffic light at moorhouse avenue not changing for pedestrians,road,road,log_reg
+deep crack forming on footpath beside the primary school,road,road,log_reg
+street sign has fallen over after strong winds,road,water,log_reg
+road marking at the roundabout has faded and is hard to see at night,road,safety,log_reg
+stormwater grate is loose and making loud noise when buses pass,road,safety,log_reg
+broken curb stone on corner is blocking pram access,road,safety,log_reg
+several potholes along school dropoff area need urgent repair,road,waste,log_reg
+loose metal on road shoulder is creating dust and safety risk,road,safety,log_reg
+missed rubbish collection for our street again this week,waste,waste,log_reg
+recycling bins overflowing beside the community hall,waste,waste,log_reg
+public litter bin in the park has not been emptied for days,waste,waste,log_reg
+illegal dumping of furniture behind the shops on ferry road,waste,road,log_reg
+broken glass around the rubbish area near the playground,waste,safety,log_reg
+green waste bags split open and rubbish has scattered on footpath,waste,waste,log_reg
+dog waste bin is full and smell is getting worse,waste,waste,log_reg
+household rubbish dumped beside reserve entrance overnight,waste,waste,log_reg
+recycling crate was not collected even though it was placed out on time,waste,waste,log_reg
+overflowing bin near bus stop is attracting birds and mess,waste,waste,log_reg
+water leaking from pipe near footpath and flowing onto road,water,water,log_reg
+burst water main has reduced pressure in nearby homes,water,water,log_reg
+stormwater drain blocked with leaves causing ponding after rain,water,water,log_reg
+continuous dripping from council tap in the reserve,water,waste,log_reg
+mud and water pooling across the shared path after every shower,water,water,log_reg
+sewer smell is strong near the creek walkway,water,water,log_reg
+blocked culvert causing water to back up along the roadside,water,water,log_reg
+leak from irrigation line in park has created slippery surface,water,road,log_reg
+standing water near play area may be a health risk,water,water,log_reg
+drain cover missing and water channel exposed beside kerb,water,water,log_reg
+streetlight outside bus stop is not working and area feels unsafe,safety,safety,log_reg
+broken swing chain at playground could injure children,safety,safety,log_reg
+graffiti on community centre wall has offensive wording,safety,waste,log_reg
+damaged fence at reserve allows easy access to construction site,safety,road,log_reg
+loose paving stones at entrance to library are a trip hazard,safety,road,log_reg
+playground gate does not close properly and opens onto road,safety,road,log_reg
+large branch hanging over footpath looks like it may fall,safety,safety,log_reg
+bus shelter glass panel cracked and dangerous,safety,safety,log_reg
+poor lighting in alleyway behind shops is attracting unsafe behaviour,safety,waste,multi_nb
+handrail on pedestrian bridge is loose,safety,road,log_reg
+pothole developing near the intersection and drivers are swerving around it,road,water,log_reg
+faded lane markings are difficult to follow in wet weather,road,road,log_reg
+footpath surface has lifted and is becoming uneven,road,water,log_reg
+damaged kerb ramp makes wheelchair access difficult,road,safety,log_reg
+loose grating beside the carriageway rattles under traffic,road,road,log_reg
+public bin is full and rubbish is spilling onto the ground,waste,waste,log_reg
+dumped household items have been left beside the reserve fence,waste,safety,log_reg
+recycling was missed on collection day for several homes,waste,waste,log_reg
+litter around the park picnic area needs urgent cleanup,waste,safety,log_reg
+waste bags have split and contents are spread across the path,waste,waste,log_reg
+blocked drain is causing surface flooding after rain,water,water,log_reg
+water leak near the verge is running across the footpath,water,water,log_reg
+strong wastewater smell near the channel suggests a pipe issue,water,water,log_reg
+standing water remains near the playground for days,water,water,log_reg
+missing drain cover creates risk beside flowing water,water,water,log_reg
+streetlight failure has left the walkway dark at night,safety,road,log_reg
+broken playground equipment could cause injury,safety,safety,log_reg
+cracked glass at the shelter is hazardous to the public,safety,safety,log_reg
+loose handrail on stairs needs urgent attention,safety,road,log_reg
+overhanging branch above the footpath looks unsafe,safety,safety,log_reg

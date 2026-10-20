@@ -78,6 +78,39 @@ def vectorize_text(train_text, test_text=None, echo_feedback: bool=False):
 
     return x_train_vec, x_test_vec, feature_list
 
+def basic_testing(model_type,test_model_feedback,vectoriser_feedback,export_training_features,cleaning_feedback):
+    # Import data
+    df = pd.read_csv('BCIT601_starter_service_requests_dataset.csv')
+    # clean data
+    df = clean_training_data(df,cleaning_feedback)
+    #prep data
+    x_train, x_test, y_train, y_test = split_training_data(df)
+    #Vectorise data
+    x_train_vec, x_test_vec, feature_list = vectorize_text(x_train, x_test, vectoriser_feedback)
+
+    if model_type == 'any' or model_type == 'log_reg':
+        log_preds, _ = test_log_regres(x_train_vec,x_test_vec,y_train,y_test,test_model_feedback)
+        if test_model_feedback:
+            log_reg_result = pd.DataFrame({
+                "Request_text" : x_test.reset_index(drop=True),
+                "True category" : y_test.reset_index(drop=True),
+                "Predicted Category" : log_preds
+            })
+            print(log_reg_result.to_string(index=False))
+
+    if model_type == 'any' or model_type == 'multi_nb':
+        nb_preds, _ = test_multinomial_nb(x_train_vec,x_test_vec,y_train,y_test,test_model_feedback)
+
+        if test_model_feedback:
+            log_reg_result = pd.DataFrame({
+                "Request_text" : x_test.reset_index(drop=True),
+                "True category" : y_test.reset_index(drop=True),
+                "Predicted Category" : nb_preds
+            })
+            print(log_reg_result.to_string(index=False))
+    if export_training_features:
+        export_cols_to_csv("training_data.csv", feature_list,x_train_vec, x_train,y_train)
+
 def export_cols_to_csv(filename: str, *cols) -> None:
     export_df = pd.concat(
         [pd.Series(column).reset_index(drop=True) for column in cols],
@@ -114,7 +147,11 @@ def test_multinomial_nb(x_train_vec, x_test_vec, y_train, y_test, echo_feedback=
         print(f"Naive Bayesian accuracy: {accuracy:.3f}")
     return predictions, accuracy
 
-def test_models_repeated(df, model_type,random_states):
+def test_models_repeated(model_type,random_states):
+    # Import data
+    df = pd.read_csv('BCIT601_starter_service_requests_dataset.csv')
+    # clean data
+    df = clean_training_data(df,False)
     writer = pd.ExcelWriter(f"{model_type}_tests.xlsx", engine='xlsxwriter')
     for random_state in random_states:
         x_train, x_test, y_train, y_test = split_training_data(df,random_state)
@@ -139,10 +176,10 @@ def test_models_repeated(df, model_type,random_states):
 
 def advanced_testing(
         model_type='log_reg',
-        min_word_count=2,
-        ngram_max=2,
+        min_word_count=1,
+        ngram_max=1,
         new_norm='l2',
-        new_use_idf=True,
+        new_use_idf=False,
         new_sublinear_tf=False,
         csv=False):
     #Set up
@@ -156,7 +193,7 @@ def advanced_testing(
         case 'multi_nb':
             classifier = MultinomialNB()
         case _:
-            classifier = LogisticRegression(max_iter=1000)
+            raise ValueError("The provided value is invalid.")
     vectoriser = TfidfVectorizer(
     stop_words='english', 
     ngram_range=(1, ngram_max), 
@@ -185,7 +222,6 @@ def advanced_testing(
         if predictions[0] == correct_cat:
             success_count += 1
 
-#    success_rate = 0 if success_count == 0 else success_count / requests.len()
     if csv:
         export_cols_to_csv(
             (
@@ -206,6 +242,48 @@ def advanced_testing(
         new_sublinear_tf,
         success_count
     ]
+
+
+def testing_parameters(model_type,export_testing_to_csv=False):
+        #Define headings
+    model_list = ['Model type']
+    df_list = ['df_min']
+    ngram_list = ['ngram_max']
+    norm_list = ['norm_model']
+    idf_list = ['use_idf']
+    sublinear_list = ['sublinear_tf']
+    success_count = ['success_count']
+    #Nested parameter loop
+    for df_min in range(1,3):
+        for n_max in range(1,4):
+            for l_mod in range(1,3):
+                for use_idf in range(0,2):
+                    for use_sublin in range(0,2):
+                        results=advanced_testing(
+                            model_type,
+                            min_word_count=df_min,
+                            ngram_max=n_max,
+                            new_norm=f'l{l_mod}',
+                            new_use_idf=bool(use_idf),
+                            new_sublinear_tf=bool(use_sublin),
+                            csv=export_testing_to_csv)
+                        model_list.append(results[0])
+                        df_list.append(results[1])
+                        ngram_list.append(results[2])
+                        norm_list.append(results[3])
+                        idf_list.append(results[4])
+                        sublinear_list.append(results[5])
+                        success_count.append(results[6])
+    export_cols_to_csv(
+        f"Advanced_parameter_tests_{model_type}.csv",
+        model_list,
+        df_list,
+        ngram_list,
+        norm_list,
+        idf_list,
+        sublinear_list,
+        success_count
+    )    
 
 
 def final_training(
@@ -244,9 +322,59 @@ def final_training(
     print(f"Finished")
 
 
+def predict_with_most_decisive_testing():
+    log_vectoriser = joblib.load("../model/vectoriser.joblib")
+    nb_vectoriser = joblib.load("./vectoriser_multi_nb.joblib")
+    log_classifier = LogisticRegression(max_iter=1000)
+    nb_classifier = MultinomialNB()
+    my_df = pd.read_csv('BCIT601_starter_service_requests_dataset.csv')
+    my_df = clean_training_data(my_df)
+    requests = my_df['request_text']
+    categories = my_df['category']
+
+    success_count=0
+    diagreement_count=0
+    finished_predictions = []
+    model_used_list = []
+    for index, request in enumerate(requests):
+        #Arrange
+        request_as_list = [request]
+        training_requests = requests.tolist()
+        training_requests.pop(index)
+        training_categories = categories.tolist()
+        correct_cat = training_categories.pop(index)
+        #Train
+        log_x_train_vec = log_vectoriser.fit_transform(training_requests)
+        nb_x_train_vec = nb_vectoriser.fit_transform(training_requests)
+        log_x_test_vec = log_vectoriser.transform(request_as_list)
+        nb_x_test_vec = nb_vectoriser.transform(request_as_list)
+        log_classifier.fit(log_x_train_vec, training_categories)
+        nb_classifier.fit(nb_x_train_vec, training_categories)
+        #Predict
+        log_predictions = log_classifier.predict(log_x_test_vec)
+        nb_predictions = nb_classifier.predict(nb_x_test_vec)
+        log_confidence = max(log_classifier.predict_proba(log_x_test_vec)[0])
+        nb_confidence = max(nb_classifier.predict_proba(nb_x_test_vec)[0])
+        if log_predictions[0] != nb_predictions[0]:
+            diagreement_count += 1
+            if log_confidence > nb_confidence:
+                prediction = log_predictions[0]
+                model_used_list.append('log_reg')
+            else:
+                prediction = nb_predictions[0]
+                model_used_list.append('multi_nb')
+        else:
+            prediction = log_predictions[0]
+            model_used_list.append('log_reg')
+        finished_predictions.append(prediction)
+        if prediction == correct_cat:
+            success_count += 1
+    print(f'Disagreements: {diagreement_count}')
+    print(f'Success {success_count}')
+    export_cols_to_csv((f"predictwithfallback.csv"),requests,categories,finished_predictions,model_used_list)
+    return categories, finished_predictions
 
 
-        
 
 
 # Archived code:
