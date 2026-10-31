@@ -1,0 +1,14 @@
+0,1,2,3,4
+Model type,df_min,ngram_max,use_idf,success_count
+multi_nb,1,1,False,41
+multi_nb,1,1,True,43
+multi_nb,1,2,False,39
+multi_nb,1,2,True,41
+multi_nb,1,3,False,39
+multi_nb,1,3,True,40
+multi_nb,2,1,False,30
+multi_nb,2,1,True,29
+multi_nb,2,2,False,31
+multi_nb,2,2,True,31
+multi_nb,2,3,False,31
+multi_nb,2,3,True,31

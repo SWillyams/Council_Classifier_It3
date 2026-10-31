@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Council Request Classifier</title>
+</head>
+<body>
+  <h1>Council Request Classifier</h1>
+  <form id="form">
+    <label for="request">Request text</label><br>
+    <textarea id="request" rows="6" cols="60" required></textarea><br>
+    <button type="submit">Predict</button>
+  </form>
+  <pre id="result"></pre>
+
+  <script>
+    document.querySelector("#form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const result = document.querySelector("#result");
+      result.textContent = "Sending request...";
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            request_text: document.querySelector("#request").value
+          })
+        });
+
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        result.textContent = `Request failed: ${error.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
